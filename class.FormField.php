@@ -318,7 +318,12 @@ class FormField extends Form
 	public function setId()
 	{
 		if ( empty( $this->attributes['id'] ) && ! empty( $this->attributes['name'] ) ) {
-			$this->attributes['id'] = 'i_' . $this->makeHtmlSafe( $this->attributes['name'] );
+			$replace = '_';
+			$name = $this->attributes['name'];
+			$name = preg_replace( '/[^0-9a-zA-Z]+/', $replace, $name );
+			$name = trim( $name, $replace );
+			$name = $this->makeHtmlSafe( $name );
+			$this->attributes['id'] = "i_{$name}";
 		}
 	}
 	
