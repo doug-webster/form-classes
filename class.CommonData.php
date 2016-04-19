@@ -57,6 +57,9 @@ class CommonData
 		$_PATTERNS['ca_postal_code'] = '([A-Za-z][0-9][A-Za-z] *[0-9][A-Za-z][0-9])';
 		$_PATTERNS['social_security_number'] = '[0-9]{3}(-| )?[0-9]{2}(-| )?[0-9]{4}';
 		$_PATTERNS['dollar_amount'] = '\$?[0-9,]+(\.[0-9]{2})?';
+		$_PATTERNS['ascii_punctuation'] = '[!"#$%&\'()*+,-./:;<=>?@[\\\\\]^_`{|}~]';
+		$_PATTERNS['ascii_printable'] = '[\x20-\x7E]';
+		$_PATTERNS['ascii_printable_no_space'] = '[\x21-\x7E]';
 		
 		array_walk_recursive( $_PATTERNS, 'CommonData::escapeRegExPattern', $delimiter );
 		
@@ -320,6 +323,7 @@ class CommonData
 	{
 		return array(
 			'United States', 
+			'Canada', 
 			'Abu Dhabi (United Arab Emirates)', 
 			'Admiralty Islands (Papua New Guinea)', 
 			'Afghanistan', 
@@ -391,7 +395,6 @@ class CommonData
 			'Caicos Islands (Turks and Caicos Islands)', 
 			'Cambodia', 
 			'Cameroon', 
-			'Canada', 
 			'Canary Islands (Spain)', 
 			'Canton Island (Kiribati)', 
 			'Cape Verde', 

@@ -1,0 +1,273 @@
+A couple of years ago I created some classes to assist with handling forms. As you no doubt are aware, there are several routine steps which need to be performed for each form field. Writing these over and over is tedious and time consuming. I created these classes in attempt to automate and therefore speed development as much as possible. I was inspired in part by the rudimentary system set up in many contact forms on toolbar sites. I was also inspired by work I did on many forms before starting DH.
+
+(Note: I have not included the classes here due to their length.)
+
+I have used these classes on most of the projects I've worked on since creating them. They have turned out to be flexible enough to work in all these many situations. Therefore you may run into them at some point. Since the form system is comprehensive, there may be a bit of a learning curve. I hope this documentation will mitigate confusion or uncertainty.
+
+There are probably some ways which these classes could be improved. But I believe the bugs have been worked out at this point.
+
+There are three classes, each in their own file: Form, FormField, and CommonData. The form classes are fully HTML 5 compatible. The idea is that a Form is an object. A form contains FormFields. Each FormField is also an object. A Form contains an array of FormFields.
+
+Forms and FormFields have attribute properties. These correspond to HTML tag attributes and in fact will be included in the output. This allows us to add any attributes while allowing the system to handle an input based on its attributes.
+
+At it's most basic, a form can be defined simply as
+$form = new Form();
+(All of the necessary options have default values.)
+
+New fields can be added to this form similar to the following:
+$form->addField( array(
+	'label' => 'Country', 
+	'attributes' => array(
+		'name' => 'country',
+		'type' => 'text', 
+		'required' => 'required', 
+	),
+));
+In order to provide options for select, checkbox, and radio inputs, include this as an array of value - label pairs:
+$form->addField( array(
+	'label' => 'Options', 
+	'attributes' => array(
+		'name' => 'option_field_name',
+		'type' => 'select', 
+	),
+	'options' => array(
+		'value1' => 'label1',
+		'value2' => 'label2',
+	),
+));
+An advantage of using the FormField class here is that we can switch between a select input and a checkbox or radio list simply by changing the type. Note: for selects, if a placeholder is defined, this will be included as the first option with a blank value. For radio or checkbox lists, a blank label will automatically include an "Other" option with a text input. A checkbox can also standalone with no options.
+
+Because form field definitions quickly get lengthy, I typically place these in a separate file.
+
+The following method returns the HTML form output.
+$form->getForm();
+This will even include error messages, if present, if the form has already been submitted. Default styles for the form's output are found in form_style.css
+
+The above is all you need to generate a basic form, though you probably will want to add a submit button. This can also be done by means of the $form->addField() method.
+$form->addField( array(
+	'label' => 'Submit', 
+	'attributes' => array(
+		'type' => 'submit', 
+	),
+));
+
+For the handling script, which will in many cases be found at the top of the form page code, a basic setup looks like this:
+if ( $form->formSubmitted && ! $form->validationRun ) $form->validateForm();
+// process valid form submission
+if ( $form->formSubmitted && empty( $form->errors ) ) {
+	// handle form submission here
+}
+The validateForm method validates each input based on it's type, whether or not is it required, and if it matches a pattern attribute, if present. This method is completely HTML 5 compatible, so for example, it will require a date field to be a valid date.
+
+The Form and FormField classes contain methods for assisting in interacting with the database, since often we want to save and/or edit database records. (These methods work with at most one table.) First a couple of options need to be set:
+$form = new Form( array( 
+	'mysqli' => $mysqli, // MySQLI object
+	'table' => 'table_name',
+));
+Then the processing script could look like
+if ( $form->formSubmitted && ! $form->validationRun ) $form->validateForm();
+// process valid form submission
+if ( $form->formSubmitted && empty( $form->errors ) ) {
+
+	// save to database -------------------------------------------------------
+	// check to make sure data is valid for the database
+	$form->validateSQLData();
+	if ( ! empty( $form->SQLWarnings ) ) {
+		foreach ( $form->SQLWarnings as $warning ) {
+			echo "<div class='form-errors'>{$warning}</div>\n";
+		}
+	}
+	
+	$query = $form->buildQuery();
+	$mysqli->query( $query );
+	// end save to database
+	
+	// other actions
+}
+A FormField's table column name ($field->dbFieldName) will default to be the same as the corresponding input name attribute.
+
+----------
+Further details on each class are listed below.
+
+Form
+All of the necessary options have default values. However, the following items can be set when declaring a new form:
+$form = new Form( array( 
+	'mysqli' => $mysqli, // MySQLI object; no default
+	'table' => 'table_name', // no default
+	'attributes' => array(
+		'action' => 'URL to handling page', // defaults to basename( $_SERVER['PHP_SELF'] )
+		'method' => 'post',
+		// any other attributes can be included here
+	),
+));
+Other properties include:
+$form->fields // array of form fields of type FormField
+$form->formSubmitted // whether or not the form was submitted; automatically set based on whether the corresponding super global variable is empty or not
+$form->includeSpambotTest (default: true) // whether or not to include the anti-spambot test; note: this affects both the getForm() output and validateForm() error checking
+$form->errors // an array of validation error messages
+$form->validationRun // whether or not the validation function has been run
+
+$form->primaryKey // name of primary key column
+$form->isEdit* // true if a DB record is being edited (update), false for new record (insert)
+$form->editID* // id of the record being edited, if applicable
+$form->SQLWarnings // an array of warnings regarding values matched to database fields
+*isEdit and editID may be set by the $form->getDBData() method
+
+The most useful methods not already mentioned include:
+$form->getAttributeString() // returns the string of attributes to include in the HTML form tag.
+$form->saveUploadedFiles( $dir, $files ) // Move uploaded files to the indicated directory; $files should be an array of files containing info from the $_FILES array
+$form->getDBData( $id ) // get indicated record from the database
+$form->buildQuery( $excludes, $sql ) // returns a MySQL query for inserting or updating the indicated table with the submitted values in the form; $excludes is an array of field names to exclude; $sql is an array of extra "SET" lines to include, such as "`column` = 'value'"
+
+FormField
+The FormField class is a desendant of the Form class.
+
+The following can be set when defining a new FormField:
+$form->addField( array(
+	'label' => 'Label', 
+	'attributes' => array(
+		'name' => 'field_name',
+		'type' => 'text', // any input or button type, select, or textarea
+		// any other attributes
+	),
+	'options' = array(),
+	'note' => 'A brief note, usually instructions of some sort, which will be included after the input.',
+	'dbFieldName' => 'columnName', // defaults to attributes['name']
+));
+None of these are required, but at the very least you will to include name and type along with either label or placeholder in almost all situations.
+
+Other properties include:
+$form->fields['field_name']->value // raw value submitted, if present
+$form->fields['field_name']->htmlSafeValue // the value made safe for output into html attributes or textareas
+$form->fields['field_name']->sqlSafeValue
+$form->fields['field_name']->disallowed_file_extensions // reject file uploads of these types; default: array( '.exe', '.dll', '.js' );
+$form->fields['field_name']->allowed_file_extensions // limit file uploads to these types (array)
+$form->fields['field_name']->dbFieldName // name of the matching column (field) in the database table
+
+The most useful methods not already mentioned include:
+$form->fields['field_name']->getFieldWithLabel() // returns the input field along with label and html wrapper
+$form->fields['field_name']->getField() // returns the input field
+$form->fields['field_name']->getLabel() // returns the label
+
+CommonData
+Contains data. There might be a better way to do this, however I'm not sure exactly which alternative would be best. While database tables might make the most sense, this way allows the system to work without setting up the database or even having a database connection.
+
+Data includes regular expressions, CSS color names, states, file upload error codes, countries, states, and provinces.
+----------
+Here is a fully functional, most basic example:
+$form = new Form();
+$form->addField( array(
+	'label' => 'Name', 
+	'attributes' => array(
+		'name' => 'field_name',
+		'type' => 'text', 
+	),
+));
+$form->addField( array(
+	'label' => 'Submit', 
+	'attributes' => array(
+		'type' => 'submit', 
+	),
+));
+
+if ( $form->formSubmitted && ! $form->validationRun ) $form->validateForm();
+// process valid form submission
+if ( $form->formSubmitted && empty( $form->errors ) ) {
+	echo "Your name is {$form->fields['field_name']->htmlSafeValue}.";
+}
+
+echo $form->getForm();
+
+A more typical example might look similar to the following:
+$mysqli = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME );
+
+$form = new Form( array( 
+	'mysqli' => $mysqli, 
+	'table' => 'users',
+));
+
+if ( ! empty( $_REQUEST['id'] ) ) {
+	$user = $form->getData( (int)$_REQUEST['id'] );
+}
+
+$form->addField( array(
+	'attributes' => array(
+		'name' => 'user_id',
+		'type' => 'hidden', 
+		'value' => ( ! empty( $user['user_id'] ) ? $user['user_id'] : '' ),
+	),
+));
+$form->addField( array(
+	'label' => 'Name', 
+	'attributes' => array(
+		'name' => 'name',
+		'type' => 'text', 
+		'required' => 'required', 
+		'value' => ( ! empty( $user['name'] ) ? $user['name'] : '' ),
+	),
+));
+$CommonData = new CommonData();
+$_PATTERNS = $CommonData->getCommonRegexPatterns();
+$options = array_merge( $CommonData->getStates(), $CommonData->getCanadianProvinces() );
+$form->addField( array(
+	'label' => 'State / Province', 
+	'attributes' => array(
+		'name' => 'state',
+		'type' => 'select', 
+		'placeholder' => '- Select State -',
+		'required' => 'required', 
+		'value' => ( ! empty( $user['state'] ) ? $user['state'] : '' ),
+	),
+	'options' => $options,
+));
+$form->addField( array(
+	'label' => 'Zip / Postal Code', 
+	'attributes' => array(
+		'name' => 'postal_code',
+		'type' => 'text', 
+		'pattern' => "({$_PATTERNS['us_zip']}|{$_PATTERNS['ca_postal_code']})",
+		'required' => 'required', 
+		'value' => ( ! empty( $user['postal_code'] ) ? $user['postal_code'] : '' ),
+	),
+));
+$form->addField( array(
+	'label' => 'Submit', 
+	'attributes' => array(
+		'name' => 'submit_button', 
+		'type' => 'submit', 
+	),
+));
+
+if ( $form->formSubmitted && ! $form->validationRun ) $form->validateForm();
+// process valid form submission
+if ( $form->formSubmitted && empty( $form->errors ) ) {
+
+	// save to database -------------------------------------------------------
+	// check to make sure data is valid for the database
+	$form->validateSQLData();
+	if ( ! empty( $form->SQLWarnings ) ) {
+		foreach ( $form->SQLWarnings as $warning ) {
+			echo "<div class='form-errors'>{$warning}</div>\n";
+		}
+	}
+	
+	$query = $form->buildQuery();
+	$mysqli->query( $query );
+	if ( ! $form->isEdit )
+		$user_id = $mysqli->insert_id;
+	// end save to database
+	
+	// other actions such as email or redirect
+}
+
+if ( ! empty( $form->errors ) ) {
+	echo $form->getErrorsHTML();
+}
+
+echo "<form " . $form->getAttributeString() . ">";
+echo $form->fields['user_id']->getFieldWithLabel;
+echo $form->fields['name']->getFieldWithLabel;
+echo $form->fields['state']->getFieldWithLabel;
+echo $form->fields['postal_code']->getFieldWithLabel;
+echo $form->fields['submit_button']->getFieldWithLabel;
+echo "</form>";
