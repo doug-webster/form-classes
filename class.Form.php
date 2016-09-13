@@ -314,6 +314,7 @@ HTML;
 		if ( empty( $this->mysqli ) || empty( $this->table ) ) return false;
 		
         $result = $this->mysqli->query( "DESCRIBE `{$this->table}`" );
+		if ( $result === false ) return false;
 		while ( $column = $result->fetch_array() ) {
 		
 			// separate type, length, and other values from type field
