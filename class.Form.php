@@ -216,12 +216,23 @@ HTML;
 			// typically don't want to include button values
 			if ( in_array( $field->attributes['type'], array( 'submit', 'reset', 'button' ) ) ) continue;
 			if ( in_array( $field->attributes['name'], $excludes ) ) continue;
-			$value = trim( ( is_array( $field->value ) ) ? implode( ', ', $field->value ) : $field->value );
-			$label = ( empty( $field->label ) && ! empty( $field->attributes['placeholder'] ) ) ? $field->attributes['placeholder'] : $field->label;
+			
+			$value = $field->value;
+			if ( is_array( $field->value ) ) {
+				$value = implode( ', ', $field->value );
+			} else if ( is_string( $field->value ) && ! empty( $field->options[$field->value] ) ) {
+				// for display, use option value rather than key
+				$value = $field->options[$field->value];
+			}
+			$value = trim( $value );
+			$htmlSafeValue = $this->makeHtmlSafe( $value );
+			
+			$label = ( empty( $field->label ) && ! empty( $field->attributes['placeholder'] ) )
+				? $field->attributes['placeholder'] : $field->label;
 			$text .= rtrim($label, ':') . ":\n    {$value}\n";
 			$label = $this->makeHtmlSafe( $label );
-			$html .= "<div><label>{$label}</label> <span class='value'>{$field->htmlSafeValue}</span></div>\n";
-			$html_email .= "<p><b>{$label}</b><br>\n&nbsp;&nbsp;&nbsp;&nbsp;<span>{$field->htmlSafeValue}</span></p>\n";
+			$html .= "<div><label>{$label}</label> <span class='value'>{$htmlSafeValue}</span></div>\n";
+			$html_email .= "<p><b>{$label}</b><br>\n&nbsp;&nbsp;&nbsp;&nbsp;<span>{$htmlSafeValue}</span></p>\n";
 		}
 		$html .= "</div>\n";
 		switch ( strtolower( $return_type ) ) {
