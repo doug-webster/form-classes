@@ -10,6 +10,8 @@ class FormField extends Form
 	public $note; // a note with further instructions about the input
 	public $disallowed_file_extensions = array( '.exe', '.dll', '.js' ); // reject file uploads of these types
 	public $allowed_file_extensions = array(); // limit file uploads to these types
+	public $custom_option_suffix = '_custom'; // used with radio and checkbox list custom (user entered) option
+	public $custom_selected = array(); // indicates whether or not a custom option was selected
 	
 	// the following are used for database interaction
 	public $mysqli; // mysqli object
@@ -94,6 +96,20 @@ class FormField extends Form
 		}
 	}
 	
+	public function getCustomInputName()
+	{
+		return "{$this->attributes['name']}{$this->custom_option_suffix}";
+	}
+	
+	public function getSubmittedValue( $name )
+	{
+		if ( strtolower( $this->method ) == 'get' && isset( $_GET[$name] ) )  {
+			return $_GET[$name];
+		} elseif ( strtolower( $this->method ) == 'post' && isset( $_POST[$name] ) ) {
+			return = $_POST[$name];
+		}
+	}
+	
 	// sets $this->value to what was submitted if possible
 	public function setSubmittedValue()
 	{
@@ -108,13 +124,30 @@ class FormField extends Form
 						$name = str_replace( $matches[0], '', $name );
 					}
 				}
+				
 				// set value
-				if ( strtolower( $this->method ) == 'get' && isset( $_GET[$name] ) )  {
-					$this->value = $_GET[$name];
-				} elseif ( strtolower( $this->method ) == 'post' && isset( $_POST[$name] ) ) {
-					$this->value = $_POST[$name];
+				$this->value = $this->getSubmittedValue( $name );
+				
+				// if a custom (user entered) value has been selected for a checkbox list, use this as value
+				$custom_name = $this->getCustomInputName();
+				if ( $this->attributes['type'] == 'checkbox' && is_array( $this->value ) ) {
+					foreach ( $this->value as $k => $v ) {
+						if ( $v == $custom_name ) {
+							$this->value[$k] = $this->getSubmittedValue( $custom_name );
+							$this->custom_selected[$custom_name] = true;
+						}
+					}
 				}
+				// if a custom (user entered) value has been selected for a radio list, use this as value
+				else if ( $this->attributes['type'] == 'radio' && $this->value == $custom_name ) {
+					$this->value = $this->getSubmittedValue( $custom_name );
+					$this->custom_selected[$custom_name] = true;
+				}
+				
 				// if specific array indexes are imbedded in name, check array for these keys
+				// for example, if name is "field[1]", then $matches[0] = '[1]' and
+				// $this->value = array( 1 => 'value1' );
+				// we want $this->value = 'value1'
 				if ( ! empty( $matches[0] ) ) {
 					$i = 0;
 					while ( is_array( $this->value ) && ! empty( $matches[0][$i] ) && $i < $count ) {
@@ -123,18 +156,21 @@ class FormField extends Form
 						$i++;
 					}
 				}
+				
 				// clean value
 				if ( is_array( $this->value ) ) {
-					if ( $this->trim ) array_walk_recursive( $this->value, array( $this, 'trimd' ) );
+					if ( $this->trim )
+						array_walk_recursive( $this->value, array( $this, 'trimd' ) );
 					array_walk_recursive( $this->value, array( $this, 'reverse_magic_quotes' ) );
 				} else {
-					if ( $this->trim ) $this->trimd( $this->value );
+					if ( $this->trim )
+						$this->trimd( $this->value );
 					$this->reverse_magic_quotes( $this->value );
 				}
 				$this->htmlSafeValue = $this->makeHtmlSafe( $this->value );
-				// in case attribute value not initially set
+				// in case attribute value not initially set;
 				// value shouldn't be set for select, checkbox, and radio inputs
-				// don't assign value so that initial value is kept
+				// don't assign value so that their initial value is kept
 				if ( ! in_array( $this->attributes['type'], array( 'select', 'checkbox', 'radio' ) ) && ! isset( $this->attributes['value'] ) ) {
 					$this->attributes['value'] = '';
 				}
@@ -256,23 +292,50 @@ class FormField extends Form
 				$attributes = $this->getAttributeString( $excludes, $name_multiple );
 				$id = ( ! empty( $this->attributes['id'] ) ) ? $this->attributes['id'] : '';
 				
+				$custom_name = $this->getCustomInputName();
 				$html .= "<div class='form-options'>\n";
 				$i = 0;
 				foreach ( $this->options as $option_value => $option_text ) {
 					++$i;
-					//$option_value = ( $option_value != '' ) ? $option_value : '(see below)'; // used in conjunction with the custom user value
-					$checked = $this->isOptionSelected( $option_value ) ? 'checked="checked"' : '';
-					$option_text = $this->makeHtmlSafe( $option_text );
-					$option_value = $this->makeHtmlSafe( $option_value );
-					$html .= "<input {$attributes} {$checked} id='{$id}-{$i}' value='{$option_value}' />\n";
-					if ( $option_text != '' ) {
-						$html .= "<label for='{$id}-{$i}' class='inline'>{$option_text}</label><br />\n";
-					} else {
-					// a blank option indicates custom user input--it allows them to specify an 'other' option
-						// determine if a custom value has been set
-						$value = ( isset( $_REQUEST["{$this->attributes['name']}_custom"] ) ) ? $this->makeHtmlSafe( $_REQUEST["{$this->attributes['name']}_custom"] ) : '';
-						$name = $this->makeHtmlSafe( $this->attributes['name'] );
-						$html .= "<input type='text' name='{$name}_custom' value='{$value}' placeholder='Other (please specify)' />\n";
+					if ( is_string( $option_text ) ) {
+						//if ( $option_text == '' && $option_value == '' )
+							$option_value = $custom_name;
+						// blank text indicates custom input
+						if ( $option_text != '' ) {
+							$checked = $this->isOptionSelected( $option_value );
+						} else {
+							$checked = ! empty( $this->custom_selected[$option_value] );
+						}
+						$checked = $checked ? 'checked="checked"' : '';
+						$option_text = $this->makeHtmlSafe( $option_text );
+						$option_value = $this->makeHtmlSafe( $option_value );
+						$html .= "<input {$attributes} {$checked} id='{$id}-{$i}' value='{$option_value}' />\n";
+						// blank text indicates custom input
+						if ( $option_text != '' ) {
+							$html .= "<label for='{$id}-{$i}' class='inline'>{$option_text}</label><br />\n";
+						} else {
+							$value = ( isset( $_REQUEST[$custom_name] ) ) ? $this->makeHtmlSafe( $_REQUEST[$custom_name] ) : '';
+							$custom_name = $this->makeHtmlSafe( $custom_name );
+							$html .= "<input type='text' name='{$custom_name}' value='{$value}' placeholder='Other (please specify)' />\n";
+						}
+					}
+					else if ( is_array( $option_text ) ) {
+						$attr = ( isset( $option_text['attributes'] ) )
+							? $option_text['attributes'] : array();
+						if ( empty( $attr['type'] ) )
+							$attr['type'] = 'text';
+						if ( empty( $attr['name'] ) )
+							$attr['name'] = $custom_name;
+						if ( empty( $attr['type'] ) )
+							$attr['placeholder'] = 'Other (please specify)';
+						$attr['value'] = $this->getSubmittedValue( $attr['name'] );
+						if ( ! isset( $attr['value'] ) )
+							$attr['value'] = '';
+						$checked = ! empty( $this->custom_selected[$attr['name']] );
+						$checked = $checked ? 'checked="checked"' : '';
+						$option_text = $this->makeHtmlSafe( $option_text );
+						$option_value = $this->makeHtmlSafe( $option_value );
+						$html .= "<input {$attributes} {$checked} id='{$id}-{$i}' value='{$option_value}' />\n";
 					}
 				}
 				$html .= "</div>\n";
