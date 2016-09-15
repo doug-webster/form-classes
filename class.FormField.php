@@ -251,7 +251,7 @@ class FormField extends Form
 				$html .= "<select {$attributes}>\n";
 				$placeholder = ( isset( $this->attributes['placeholder'] ) ) ? $this->makeHtmlSafe( $this->attributes['placeholder'] ) : '';
 				if ( ! isset( $this->attributes['required'] ) || ! empty( $placeholder ) ) {
-					$html .= "<option value=''>{$placeholder}</option>\n";
+					$html .= "<option value='' class='placeholder'>{$placeholder}</option>\n";
 				}
 				
 				foreach ( $this->options as $option_value => $option_text ) {
