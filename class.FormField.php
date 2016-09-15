@@ -316,7 +316,7 @@ class FormField extends Form
 						$value = ( isset( $value ) )
 							? $this->makeHtmlSafe( $value ) : '';
 						$custom_name = $this->makeHtmlSafe( $custom_name );
-						$html .= "<input type='text' name='{$custom_name}' value='{$value}' placeholder='Other (please specify)' />\n";
+						$html .= "<input type='text' name='{$custom_name}' value='{$value}' placeholder='Other (please specify)' onfocus='document.getElementById(\"{$id}-{$i}\").checked = true;' />\n";
 					}
 				}
 				$html .= "</div>\n";
