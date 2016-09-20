@@ -1,12 +1,10 @@
 A couple of years ago I created some classes to assist with handling forms. As you no doubt are aware, there are several routine steps which need to be performed for each form field. Writing these over and over is tedious and time consuming. I created these classes in attempt to automate and therefore speed development as much as possible. I was inspired in part by the rudimentary system set up in many contact forms on toolbar sites. I was also inspired by work I did on many forms before starting DH.
 
-(Note: I have not included the classes here due to their length.)
+I have used these classes on most of the projects I've worked on since creating them. They have turned out to be flexible enough to work in all these many situations. Since the form system is comprehensive, there may be a bit of a learning curve. I hope this documentation will mitigate confusion or uncertainty.
 
-I have used these classes on most of the projects I've worked on since creating them. They have turned out to be flexible enough to work in all these many situations. Therefore you may run into them at some point. Since the form system is comprehensive, there may be a bit of a learning curve. I hope this documentation will mitigate confusion or uncertainty.
+There are probably some ways which these classes could be improved. But I believe most of the bugs have been worked out at this point.
 
-There are probably some ways which these classes could be improved. But I believe the bugs have been worked out at this point.
-
-There are three classes, each in their own file: Form, FormField, and CommonData. The form classes are fully HTML 5 compatible. The idea is that a Form is an object. A form contains FormFields. Each FormField is also an object. A Form contains an array of FormFields.
+There are three classes, each in their own file: Form, FormField, and CommonData. The form classes are fully HTML 5 compatible. The idea is that a Form is an object. A form contains FormFields. Each FormField is also an object. A Form contains an array of FormField objects.
 
 Forms and FormFields have attribute properties. These correspond to HTML tag attributes and in fact will be included in the output. This allows us to add any attributes while allowing the system to handle an input based on its attributes.
 
@@ -59,7 +57,7 @@ if ( $form->formSubmitted && empty( $form->errors ) ) {
 }
 The validateForm method validates each input based on it's type, whether or not is it required, and if it matches a pattern attribute, if present. This method is completely HTML 5 compatible, so for example, it will require a date field to be a valid date.
 
-The Form and FormField classes contain methods for assisting in interacting with the database, since often we want to save and/or edit database records. (These methods work with at most one table.) First a couple of options need to be set:
+The Form and FormField classes contain methods for assisting in interacting with the database, since often we want to save and/or edit database records. (These methods work with only one table.) First a couple of options need to be set:
 $form = new Form( array( 
 	'mysqli' => $mysqli, // MySQLI object
 	'table' => 'table_name',
