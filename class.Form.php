@@ -282,8 +282,11 @@ HTML;
 	} // end function
 	
 	// $files should be an array of files containing info from the $_FILES array
-	public function saveUploadedFiles( $dir, $files )
+	public function saveUploadedFiles( $dir, $files = array() )
 	{
+		if ( empty( $files ) )
+			$files = $this->value;
+		$dir = rtrim( $dir, '/\\' ); // strip trailing slash or backslash
 		$errors = array();
 		$filenames = array();
 		if ( ! is_dir( $dir ) ) {

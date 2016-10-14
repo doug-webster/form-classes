@@ -113,7 +113,7 @@ $form->SQLWarnings // an array of warnings regarding values matched to database 
 
 The most useful methods not already mentioned include:
 $form->getAttributeString() // returns the string of attributes to include in the HTML form tag.
-$form->saveUploadedFiles( $dir, $files ) // Move uploaded files to the indicated directory; $files should be an array of files containing info from the $_FILES array
+$form->saveUploadedFiles( $dir, $files = array() ) // Move uploaded files to the indicated directory; $files should be an array of files containing info from the $_FILES array
 $form->getDBData( $id ) // get indicated record from the database
 $form->buildQuery( $excludes, $sql ) // returns a MySQL query for inserting or updating the indicated table with the submitted values in the form; $excludes is an array of field names to exclude; $sql is an array of extra "SET" lines to include, such as "`column` = 'value'"
 

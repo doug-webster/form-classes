@@ -103,6 +103,23 @@ class FormField extends Form
 	
 	public function getSubmittedValue( $name )
 	{
+		if ( strtolower( $this->attributes['type'] ) == 'file' ) {
+			// the file field seems to usually be present even if no file has been submitted
+			// therefore the following check probably isn't very useful, but we'll leave it here in case.
+			if ( empty( $_FILES[$name] ) ) return;
+			// convert $_FILES into one usable array
+			if ( ! is_array( $_FILES[$name]['name'] ) ) {
+				$files = array( $_FILES[$name] );
+			} else {
+				foreach ( $_FILES[$name]['name'] as $i => $filename ) {
+					foreach ( $_FILES[$name] as $key => $value ) {
+						$files["{$name}[{$i}]"][$key] = $value[$i];
+					}
+				}
+			}
+			return $files;
+		}
+		
 		if ( strtolower( $this->method ) == 'get' && isset( $_GET[$name] ) )  {
 			return $_GET[$name];
 		} elseif ( strtolower( $this->method ) == 'post' && isset( $_POST[$name] ) ) {
@@ -127,6 +144,7 @@ class FormField extends Form
 				
 				// set value
 				$this->value = $this->getSubmittedValue( $name );
+				if ( strtolower( $this->attributes['type'] ) == 'file' ) return;
 				
 				// if a custom (user entered) value has been selected for a checkbox list, use this as value
 				$custom_name = $this->getCustomInputName();
@@ -438,8 +456,7 @@ class FormField extends Form
 		$match_value = ( ! is_array( $this->value ) ) ? trim( $this->value ) : implode( ', ', $this->value );
 		
 		// if required, check to make sure value exists and is not blank
-		// file types won't have a value at this point
-		if ( ( $this->value == null || $this->value == '' ) && $type != 'file' ) {
+		if ( $this->value == null || $this->value == '' || $this->value == array() ) {
 			if ( $required && ! isset( $this->attributes['disabled'] ) ) {
 				return "{$label} is a required field.";
 			} else {
@@ -611,26 +628,7 @@ class FormField extends Form
 				break;
 			
 			case 'file':
-				if ( ! isset( $this->attributes['name'] ) ) break;
-				$name = str_replace( '[]', '', $this->attributes['name'] );
-				// the file field seems to usually be present even if no file has been submitted
-				// therefore the following check probably isn't very useful, but we'll leave it here in case.
-				if ( empty( $_FILES[$name] ) ) {
-					if ( $required ) {
-						return "{$label} is a required field.";
-					}
-					break;
-				}
-				// convert $_FILES into one usable array
-				if ( ! is_array( $_FILES[$name]['name'] ) ) {
-					$files = array( $_FILES[$name] );
-				} else {
-					foreach ( $_FILES[$name]['name'] as $i => $filename ) {
-						foreach ( $_FILES[$name] as $key => $value ) {
-							$files["{$name}[{$i}]"][$key] = $value[$i];
-						}
-					}
-				}
+				$files = $this->value;
 				// check each file
 				foreach ( $files as $key => $file ) {
 					if ( $file['error'] == UPLOAD_ERR_NO_FILE ) {
@@ -661,7 +659,7 @@ class FormField extends Form
 						//$this->value[] = $file; // place the array of file info into value
 					}
 				}
-				$this->value = $files; // place the array of file info into value
+				$this->value = $files; // update the value; may have removed bad uploads
 				break;
 		} // end switch
 		
