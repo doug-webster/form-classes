@@ -12,6 +12,7 @@ class FormField extends Form
 	public $allowed_file_extensions = array(); // limit file uploads to these types
 	public $custom_option_suffix = '_custom'; // used with radio and checkbox list custom (user entered) option
 	public $custom_selected = false; // indicates whether or not a custom option was selected; assumes only one custom input
+	public $filepath = ''; // used with file types; path to location to save file
 	
 	// the following are used for database interaction
 	public $mysqli; // mysqli object
@@ -48,6 +49,9 @@ class FormField extends Form
 				// default to same name as form input name
 				$this->dbFieldName = $this->attributes['name'];
 			}
+		}
+		if ( ! empty( $initialize['filepath'] ) ) {
+			$this->filepath = $initialize['filepath'];
 		}
 	}
 	
@@ -665,6 +669,48 @@ class FormField extends Form
 		
 		return true;
 	} // end function 
+	
+	// $files should be an array of files containing info from the $_FILES array
+	public function saveUploadedFiles( $dir = '', $files = array() )
+	{
+		if ( empty( $files ) )
+			$files = $this->value;
+		if ( empty( $dir ) )
+			$dir = $this->filepath;
+		$dir = rtrim( $dir, '/\\' ); // strip trailing slash or backslash
+		$errors = array();
+		$filenames = array();
+		
+		if ( ! is_dir( $dir ) ) {
+			if ( ! @mkdir( $dir, 0777, true ) ) {
+				$errors[] = "<div class='form-errors'>Can't create file directory {$dir}.</div>\n";
+			}
+		}
+		if ( is_dir( $dir ) && is_writable( $dir ) ) {
+			foreach( $files as $file ) {
+				// if filename already exists, rename current file
+				$i = 0;
+				$name = $file['name'];
+				$pieces = pathinfo( $file['name'] );
+				$ext = ( isset( $pieces['extension'] ) ) ? ".{$pieces['extension']}" : '';
+				while ( file_exists( "{$dir}/{$name}" ) && $i < 10000 ) {
+					$name = "{$pieces['filename']}{$i}{$ext}";
+					$i++;
+				}
+				
+				// move temp file to new location
+				if ( ! move_uploaded_file( $file['tmp_name'], "{$dir}/{$name}" ) ) {
+					$errors[] = "<div class='form-errors'>There was an error attempting to save an uploaded file.</div>\n";
+				} else {
+					$filenames[] = $name;
+				}
+			} // end loop for each file
+		} else {
+			$errors[] = "<div class='form-errors'>Can't write to file directory.</div>\n";
+		}
+		
+		return array( 'errors' => $errors, 'filenames' => $filenames );
+	} // end function
 	
 	/* the following methods are for database interaction */
 	
