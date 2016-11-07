@@ -457,7 +457,7 @@ class FormField extends Form
 		$label = '<span class="label">' . $this->makeHtmlSafe( $label ) . '</span>';
 		$required = isset( $this->attributes['required'] ) ? true : false;
 		$type = ( ! empty( $this->attributes['type'] ) ) ? strtolower( $this->attributes['type'] ) : '';
-		$match_value = ( ! is_array( $this->value ) ) ? trim( $this->value ) : implode( ', ', $this->value );
+		$match_value = ( ! is_array( $this->value ) ) ? trim( $this->value ) : $this->implode_recursive( ', ', $this->value );
 		
 		// if required, check to make sure value exists and is not blank
 		if ( $this->value == null || $this->value == '' || $this->value == array() ) {

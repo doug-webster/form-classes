@@ -60,10 +60,26 @@ class Form
 			foreach ( $value as $key => $val ) {
 				$value[$key] = $this->makeHtmlSafe( $val );
 			}
-			return implode( ', ', $value);
+			return $this->implode_recursive( ', ', $value);
 		} else {
 			return htmlspecialchars( $value, ENT_QUOTES );
 		}
+	}
+	
+	// implode a multi-demensional array
+	private function implode_recursive( $separator, $var )
+	{
+		if ( ! is_array( $var ) ) return (string)$var;
+
+		$return = '';
+		foreach ( $var as $k => $val ) {
+			if ( is_array( $val ) )
+				$return .= $this->implode_recursive( $separator, $val );
+			else
+				$return .= (string)$val;
+			$return .= $separator;
+		}
+		return trim( $return, $separator );
 	}
 	
 	// returns the array of attributes as a string
@@ -219,7 +235,7 @@ HTML;
 			
 			$value = $field->value;
 			if ( is_array( $field->value ) ) {
-				$value = implode( ', ', $field->value );
+				$value = $field->implode_recursive( ', ', $field->value );
 			} else if ( is_string( $field->value ) && ! empty( $field->options[$field->value] ) ) {
 				// for display, use option value rather than key
 				$value = $field->options[$field->value];
