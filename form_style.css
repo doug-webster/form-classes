@@ -8,7 +8,7 @@ form .center {text-align: center;}
 form .section {border: thin solid black; padding: 0px 15px; margin: 20px 0px;}
 form .subsection {border: thin solid black; background: #F5F5F5; margin: 10px 0px; padding: 10px;}
 form .form-input-box {font-size: 1em; line-height: 1.5em; margin-top: 1em; margin-bottom: 1em; white-space: nowrap;}
-	form label:not(.checkbox):not(.radio) {display: -moz-inline-stack; display: inline-block; margin: 0 5px 0 0; padding: 0; text-align: right; width: 120px; white-space: wrap; vertical-align: top;}
+	form label:not(.checkbox):not(.radio) {display: -moz-inline-stack; display: inline-block; margin: 0 5px 0 0; padding: 0; text-align: right; width: 120px; white-space: normal; vertical-align: top;}
 	/* for radio and checkbox labels */
 	form label.inline:not(.checkbox):not(.radio) {display: inline; text-align: left; width: auto;}
 	input, select, textarea {max-width: 100%;}
