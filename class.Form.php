@@ -67,7 +67,7 @@ class Form
 	}
 	
 	// implode a multi-demensional array
-	private function implode_recursive( $separator, $var )
+	protected function implode_recursive( $separator, $var )
 	{
 		if ( ! is_array( $var ) ) return (string)$var;
 
