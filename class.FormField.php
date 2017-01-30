@@ -671,7 +671,7 @@ class FormField extends Form
 	} // end function 
 	
 	// $files should be an array of files containing info from the $_FILES array
-	public function saveUploadedFiles( $dir = '', $files = array() )
+	public function saveUploadedFiles( $dir = '', $files = array(), $safe_filename = true )
 	{
 		if ( empty( $files ) )
 			$files = $this->value;
@@ -687,11 +687,16 @@ class FormField extends Form
 			}
 		}
 		if ( is_dir( $dir ) && is_writable( $dir ) ) {
-			foreach( $files as $file ) {
+			foreach( $files as $i => $file ) {
 				// if filename already exists, rename current file
 				$i = 0;
 				$name = $file['name'];
-				$pieces = pathinfo( $file['name'] );
+				if ( $safe_filename ) {
+					$name = strtolower( $name );
+					$name = preg_replace( '/[^0-9a-zA-Z]+/', '_', $name );
+					$name = trim( $name, '_' );
+				}
+				$pieces = pathinfo( $name );
 				$ext = ( isset( $pieces['extension'] ) ) ? ".{$pieces['extension']}" : '';
 				while ( file_exists( "{$dir}/{$name}" ) && $i < 10000 ) {
 					$name = "{$pieces['filename']}{$i}{$ext}";
@@ -702,6 +707,7 @@ class FormField extends Form
 				if ( ! move_uploaded_file( $file['tmp_name'], "{$dir}/{$name}" ) ) {
 					$errors[] = "<div class='form-errors'>There was an error attempting to save an uploaded file.</div>\n";
 				} else {
+					$this->value[$i]['name'] = $name;
 					$filenames[] = $name;
 				}
 			} // end loop for each file
