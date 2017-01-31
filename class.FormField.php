@@ -694,7 +694,9 @@ class FormField extends Form
 				if ( $safe_filename ) {
 					$name = strtolower( $name );
 					// \p indicates a unicode class; L includes letters and N numbers
-					$name = preg_replace( '/[^\p{L}\p{N}\.]+/', '_', $name );
+					// the u at the end apparently turns on unicode mode
+					// we're replacing non-letters and numbers with an underscore
+					$name = preg_replace( '/[^\p{L}\p{N}\.]+/u', '_', $name );
 					$name = trim( $name, '_' );
 				}
 				$pieces = pathinfo( $name );
