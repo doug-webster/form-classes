@@ -693,7 +693,8 @@ class FormField extends Form
 				$name = $file['name'];
 				if ( $safe_filename ) {
 					$name = strtolower( $name );
-					$name = preg_replace( '/[^0-9a-zA-Z]+/', '_', $name );
+					// \p indicates a unicode class; L includes letters and N numbers
+					$name = preg_replace( '/[^\p{L}\p{N}\.]+/', '_', $name );
 					$name = trim( $name, '_' );
 				}
 				$pieces = pathinfo( $name );
