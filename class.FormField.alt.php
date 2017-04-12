@@ -689,10 +689,9 @@ class FormField extends Form
 		if ( is_dir( $dir ) && is_writable( $dir ) ) {
 			foreach( $files as $i => $file ) {
 				// if filename already exists, rename current file
-				$j = 0;
+				$i = 0;
 				$name = $file['name'];
 				if ( $safe_filename ) {
-					$name = strtolower( $name );
 					// \p indicates a unicode class; L includes letters and N numbers
 					// the u at the end apparently turns on unicode mode
 					// we're replacing non-letters and numbers with an underscore
@@ -701,9 +700,10 @@ class FormField extends Form
 				}
 				$pieces = pathinfo( $name );
 				$ext = ( isset( $pieces['extension'] ) ) ? ".{$pieces['extension']}" : '';
-				while ( file_exists( "{$dir}/{$name}" ) && $j < 10000 ) {
-					$name = "{$pieces['filename']}{$j}{$ext}";
-					$j++;
+				// use case insensitive file_exists
+				while ( $this->file_exists_i( "{$dir}/{$name}" ) && $i < 10000 ) {
+					$name = "{$pieces['filename']}{$i}{$ext}";
+					$i++;
 				}
 				
 				// move temp file to new location
@@ -720,6 +720,18 @@ class FormField extends Form
 		
 		return array( 'errors' => $errors, 'filenames' => $filenames );
 	} // end function
+	
+	// case insensitive file_exists
+	public function file_exists_i( $filename )
+	{
+		$dir = dirname( $filename );
+		$files_in_dir = glob( "{$dir}/*", GLOB_NOSORT );
+		foreach ( $files_in_dir as $file ) {
+			if ( strtolower( $file ) == strtolower( $filename  )
+				return true;
+		}
+		return false;
+	}
 	
 	/* the following methods are for database interaction */
 	
