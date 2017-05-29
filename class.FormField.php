@@ -383,7 +383,10 @@ class FormField extends Form
 	// set id if not explicitly set
 	public function setId()
 	{
-		if ( empty( $this->attributes['id'] ) && ! empty( $this->attributes['name'] ) ) {
+		if ( ! empty( $this->attributes['id'] ) ) return;
+		
+		$this->attributes['id'] = '';
+		if ( ! empty( $this->attributes['name'] ) ) {
 			$replace = '_';
 			$name = $this->attributes['name'];
 			$name = preg_replace( '/[^0-9a-zA-Z]+/', $replace, $name );

@@ -177,7 +177,7 @@ HTML;
 		} else {
 			// get each label and field
 			foreach ( $this->fields as $field ) {
-				if ( in_array( $field->attributes['name'], $excludes ) ) continue;
+				if ( isset( $field->attributes['name'] ) && in_array( $field->attributes['name'], $excludes ) ) continue;
 				$html .= $field->getFieldWithLabel();
 			}
 		}
