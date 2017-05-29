@@ -675,6 +675,7 @@ class FormField extends Form
 	{
 		if ( empty( $files ) )
 			$files = $this->value;
+		if ( empty( $files ) || ! is_array( $files ) ) return;
 		if ( empty( $dir ) )
 			$dir = $this->filepath;
 		$dir = rtrim( $dir, '/\\' ); // strip trailing slash or backslash
