@@ -1,7 +1,7 @@
 <?php
 class CommonData
 {
-	public function getCommonRegexPatterns( $delimiter = '/' )
+	static public function getCommonRegexPatterns( $delimiter = '/' )
 	{
 		// basic patterns
 		$_PATTERNS['year']          = '([0-9]{4})';
@@ -66,12 +66,12 @@ class CommonData
 		return $_PATTERNS;
 	} // end function
 	
-	public function escapeRegExPattern( &$pattern, $key, $delimiter )
+	static public function escapeRegExPattern( &$pattern, $key, $delimiter )
 	{
 		$pattern = str_replace( $delimiter, "\\{$delimiter}", $pattern );
 	}
 	
-	public function getCSSColorNames()
+	static public function getCSSColorNames()
 	{
 		return array(
 			'black' => '#000000',
@@ -217,7 +217,7 @@ class CommonData
 		);
 	} // end function
 	
-	public function getFileUploadErrorCodes()
+	static public function getFileUploadErrorCodes()
 	{
 		return array(
 			UPLOAD_ERR_OK => 'There is no error, the file uploaded with success.',
@@ -231,7 +231,7 @@ class CommonData
 		);
 	} // end function
 
-	public function getStates( $extended = false )
+	static public function getStates( $extended = false )
 	{
 		$states = array(
 			'AL' => 'Alabama',
@@ -300,7 +300,7 @@ class CommonData
 		return ( $extended ) ? array_merge( $states, $us_territories ) : $states;
 	} // end function
 
-	public function getCanadianProvinces()
+	static public function getCanadianProvinces()
 	{
 		return array(
 			'AB' => 'Alberta', 
@@ -319,7 +319,7 @@ class CommonData
 		);
 	} // end function
 
-	public function getCountries()
+	static public function getCountries()
 	{
 		// I don't now recall where I got this list of countries from
 		// there are ~500 on this list and ~250 on the ISO 3166-1 list below
@@ -833,7 +833,7 @@ class CommonData
 	
 	// returns an array of ISO 3166-1 alpha-2 codes : country names
 	// or the country name for the specified code
-	public function getISOCountries( $code = false )
+	static public function getISOCountries( $code = false )
 	{
 		$data = array(
 			'AF' => 'Afghanistan',

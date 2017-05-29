@@ -449,10 +449,9 @@ class FormField extends Form
 	// returns true if valid or an error message if invalid
 	public function validateInput( $strict = false, $change = true )
 	{
-		$CommonData = new CommonData();
-		$_PATTERNS = $CommonData->getCommonRegexPatterns();
-		$_COLOR_NAMES = $CommonData->getCSSColorNames();
-		$_FILE_UPLOAD_ERROR_CODES = $CommonData->getFileUploadErrorCodes();
+		$_PATTERNS = CommonData::getCommonRegexPatterns();
+		$_COLOR_NAMES = CommonData::getCSSColorNames();
+		$_FILE_UPLOAD_ERROR_CODES = CommonData::getFileUploadErrorCodes();
 		$label = ( empty( $this->label ) && ! empty( $this->attributes['placeholder'] ) ) ? $this->attributes['placeholder'] : $this->label;
 		$label = '<span class="label">' . $this->makeHtmlSafe( $label ) . '</span>';
 		$required = isset( $this->attributes['required'] ) ? true : false;
@@ -727,8 +726,7 @@ class FormField extends Form
 	// prepares $value for insertion into database query
 	public function makeSqlSafe( $value )
 	{
-		$CommonData = new CommonData();
-		$_PATTERNS = $CommonData->getCommonRegexPatterns();
+		$_PATTERNS = CommonData::getCommonRegexPatterns();
 		
 		if ( isset( $this->attributes['type'] ) && strtolower( $this->attributes['type'] ) == 'checkbox' && count( $this->options ) <= 1 ) {
 			// in this case, the checkbox field is acting like a boolean input
@@ -802,8 +800,7 @@ class FormField extends Form
 	// returns true if valid or a warning message if invalid
 	public function validateSQLValue()
 	{
-		$CommonData = new CommonData();
-		$_PATTERNS = $CommonData->getCommonRegexPatterns();
+		$_PATTERNS = CommonData::getCommonRegexPatterns();
 		if ( empty( $this->columnInfo['Type'] ) ) return true;
 		$label = '<span class="label">' . $this->makeHtmlSafe( $this->label ) . '</span>';
 		$type = strtoupper( $this->columnInfo['Type'] );

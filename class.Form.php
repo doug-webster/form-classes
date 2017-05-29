@@ -358,8 +358,7 @@ HTML;
 	// creates an insert or update query of the submitted form data
 	public function buildQuery( $excludes = array(), $sql = array() )
 	{
-		$CommonData = new CommonData();
-		$_PATTERNS = $CommonData->getCommonRegexPatterns();
+		$_PATTERNS = CommonData::getCommonRegexPatterns();
 
 		$query = ( ( $this->isEdit ) ? 'UPDATE' : 'INSERT INTO' ) . " `{$this->table}` SET ";
 		
