@@ -654,13 +654,14 @@ class FormField extends Form
 						}
 						return $msg;
 					} else {
-						if ( $ext = strtolower( strrchr( $file['name'], '.' ) ) ) {
-							array_walk_recursive( $this->allowed_file_extensions, 'FormField::strtolowerd' );
-							array_walk_recursive( $this->disallowed_file_extensions, 'FormField::strtolowerd' );
-							if ( in_array( $ext, $this->disallowed_file_extensions ) 
-								|| ! empty( $this->allowed_file_extensions ) && ! in_array( $ext, $this->allowed_file_extensions ) ) {
-								return "{$label} contains a file type which is not allowed.";
-							}
+						array_walk_recursive( $this->allowed_file_extensions, 'FormField::strtolowerd' );
+						array_walk_recursive( $this->disallowed_file_extensions, 'FormField::strtolowerd' );
+						$ext = strtolower( strrchr( $file['name'], '.' ) );
+						if ( empty( $ext )
+							|| in_array( $ext, $this->disallowed_file_extensions ) 
+							|| ( ! empty( $this->allowed_file_extensions )
+							&& ! in_array( $ext, $this->allowed_file_extensions ) ) ) {
+							return "{$label} contains a file type which is not allowed.";
 						}
 						//$this->value[] = $file; // place the array of file info into value
 					}
