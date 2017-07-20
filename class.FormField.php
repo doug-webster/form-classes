@@ -134,69 +134,67 @@ class FormField extends Form
 	// sets $this->value to what was submitted if possible
 	public function setSubmittedValue()
 	{
+		if ( ! $this->formSubmitted || ! empty( $this->attributes['name'] ) || empty( $this->method ) ) return;
+		
 		$this->updateRequestGlobals();
-		if ( $this->formSubmitted && ! empty( $this->attributes['name'] ) ) {
-			if ( ! empty( $this->method ) ) {
-				$name = $this->attributes['name'];
-				// if [] found in name, remove
-				if( $count = preg_match_all( '/\[.*?\]/', $name, $matches ) ) {
-					$this->value = null;
-					if ( ! empty( $matches[0] ) ) {
-						$name = str_replace( $matches[0], '', $name );
-					}
-				}
-				
-				// set value
-				$this->value = $this->getSubmittedValue( $name );
-				if ( strtolower( $this->attributes['type'] ) == 'file' ) return;
-				
-				// if a custom (user entered) value has been selected for a checkbox list, use this as value
-				$custom_name = $this->getCustomInputName();
-				if ( $this->attributes['type'] == 'checkbox' && is_array( $this->value ) ) {
-					foreach ( $this->value as $k => $v ) {
-						if ( $v == $custom_name ) {
-							$this->value[$k] = $this->getSubmittedValue( $custom_name );
-							$this->custom_selected = true;
-						}
-					}
-				}
-				// if a custom (user entered) value has been selected for a radio list, use this as value
-				else if ( $this->attributes['type'] == 'radio' && $this->value == $custom_name ) {
-					$this->value = $this->getSubmittedValue( $custom_name );
+		$name = $this->attributes['name'];
+		// if [] found in name, remove
+		if( $count = preg_match_all( '/\[.*?\]/', $name, $matches ) ) {
+			$this->value = null;
+			if ( ! empty( $matches[0] ) ) {
+				$name = str_replace( $matches[0], '', $name );
+			}
+		}
+		
+		// set value
+		$this->value = $this->getSubmittedValue( $name );
+		if ( strtolower( $this->attributes['type'] ) == 'file' ) return;
+		
+		// if a custom (user entered) value has been selected for a checkbox list, use this as value
+		$custom_name = $this->getCustomInputName();
+		if ( $this->attributes['type'] == 'checkbox' && is_array( $this->value ) ) {
+			foreach ( $this->value as $k => $v ) {
+				if ( $v == $custom_name ) {
+					$this->value[$k] = $this->getSubmittedValue( $custom_name );
 					$this->custom_selected = true;
 				}
-				
-				// if specific array indexes are imbedded in name, check array for these keys
-				// for example, if name is "field[1]", then $matches[0] = '[1]' and
-				// $this->value = array( 1 => 'value1' );
-				// we want $this->value = 'value1'
-				if ( ! empty( $matches[0] ) ) {
-					$i = 0;
-					while ( is_array( $this->value ) && ! empty( $matches[0][$i] ) && $i < $count ) {
-						$key = str_replace( array( '[', ']' ), '', $matches[0][$i] );
-						$this->value = $this->value[$key];
-						$i++;
-					}
-				}
-				
-				// clean value
-				if ( is_array( $this->value ) ) {
-					if ( $this->trim )
-						array_walk_recursive( $this->value, array( $this, 'trimd' ) );
-					array_walk_recursive( $this->value, array( $this, 'reverse_magic_quotes' ) );
-				} else {
-					if ( $this->trim )
-						$this->trimd( $this->value );
-					$this->reverse_magic_quotes( $this->value );
-				}
-				$this->htmlSafeValue = $this->makeHtmlSafe( $this->value );
-				// in case attribute value not initially set;
-				// value shouldn't be set for select, checkbox, and radio inputs
-				// don't assign value so that their initial value is kept
-				if ( ! in_array( $this->attributes['type'], array( 'select', 'checkbox', 'radio' ) ) && ! isset( $this->attributes['value'] ) ) {
-					$this->attributes['value'] = '';
-				}
 			}
+		}
+		// if a custom (user entered) value has been selected for a radio list, use this as value
+		else if ( $this->attributes['type'] == 'radio' && $this->value == $custom_name ) {
+			$this->value = $this->getSubmittedValue( $custom_name );
+			$this->custom_selected = true;
+		}
+		
+		// if specific array indexes are imbedded in name, check array for these keys
+		// for example, if name is "field[1]", then $matches[0] = '[1]' and
+		// $this->value = array( 1 => 'value1' );
+		// we want $this->value = 'value1'
+		if ( ! empty( $matches[0] ) ) {
+			$i = 0;
+			while ( is_array( $this->value ) && ! empty( $matches[0][$i] ) && $i < $count ) {
+				$key = str_replace( array( '[', ']' ), '', $matches[0][$i] );
+				$this->value = $this->value[$key];
+				$i++;
+			}
+		}
+		
+		// clean value
+		if ( is_array( $this->value ) ) {
+			if ( $this->trim )
+				array_walk_recursive( $this->value, array( $this, 'trimd' ) );
+			array_walk_recursive( $this->value, array( $this, 'reverse_magic_quotes' ) );
+		} else {
+			if ( $this->trim )
+				$this->trimd( $this->value );
+			$this->reverse_magic_quotes( $this->value );
+		}
+		$this->htmlSafeValue = $this->makeHtmlSafe( $this->value );
+		// in case attribute value not initially set;
+		// value shouldn't be set for select, checkbox, and radio inputs
+		// don't assign value so that their initial value is kept
+		if ( ! in_array( $this->attributes['type'], array( 'select', 'checkbox', 'radio' ) ) && ! isset( $this->attributes['value'] ) ) {
+			$this->attributes['value'] = '';
 		}
 	}
 	
