@@ -30,18 +30,16 @@ class FormField extends Form
 	
 	public function __construct( $initialize = array() )
 	{
-		if ( ! empty( $initialize['label'] ) ) {
+		if ( ! empty( $initialize['label'] ) )
 			$this->label = trim( $initialize['label'] );
-		}
-		if ( ! empty( $initialize['attributes'] ) ) {
+		if ( ! empty( $initialize['attributes'] ) )
 			$this->attributes = $initialize['attributes'];
-		}
-		if ( ! empty( $initialize['options'] ) ) {
+		if ( empty( $this->attributes['type'] ) )
+			$this->attributes['type'] = 'text';
+		if ( ! empty( $initialize['options'] ) )
 			$this->options = $initialize['options'];
-		}
-		if ( ! empty( $initialize['note'] ) ) {
+		if ( ! empty( $initialize['note'] ) )
 			$this->note = $initialize['note'];
-		}
 		if ( ! empty( $initialize['dbFieldName'] ) ) {
 			$this->dbFieldName = $initialize['dbFieldName'];
 		} else {
@@ -50,9 +48,8 @@ class FormField extends Form
 				$this->dbFieldName = $this->attributes['name'];
 			}
 		}
-		if ( ! empty( $initialize['filepath'] ) ) {
+		if ( ! empty( $initialize['filepath'] ) )
 			$this->filepath = $initialize['filepath'];
-		}
 	}
 	
 	// remove slashes if magic quotes is on

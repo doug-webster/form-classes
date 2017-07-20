@@ -125,7 +125,7 @@ $form->addField( array(
 	'label' => 'Label', 
 	'attributes' => array(
 		'name' => 'field_name',
-		'type' => 'text', // any input or button type, select, or textarea
+		'type' => 'text', // any input or button type, select, or textarea; defaults to text
 		// any other attributes
 	),
 	'options' = array(),
