@@ -409,7 +409,7 @@ class FormField extends Form
 	}
 	
 	// return the field along with label and html wrapper
-	public function getFieldWithLabel( $input = '' )
+	public function getFieldWithLabel( $inc_label = true, $input = '' )
 	{
 		$html = '';
 		$type = isset( $this->attributes['type'] ) ? strtolower( $this->attributes['type'] ) : '';
@@ -428,9 +428,10 @@ class FormField extends Form
 		$classes = implode( ' ', $classes );
 		$html .= "<div class='form-input-box {$classes}" . ( ( in_array( $type, array( 'submit', 'reset', 'button' ) ) ) ? ' aligned' : '') . "' id='form_" . $this->attributes['id'] . "'>\n";
 		
-		if ( ! in_array( $type, array( 'submit', 'reset', 'button' ) ) ) {
+		if ( ! in_array( $type, array( 'submit', 'reset', 'button' ) ) )
+			$inc_label = false;
+		if ( $inc_label )
 			$html .= $this->getLabel();
-		}
 		
 		if ( ! empty( $input ) ) {
 			$html .= $input;
