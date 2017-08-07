@@ -474,7 +474,7 @@ class FormField extends Form
 				return true;
 				
 			// the following HTML 5 inputs should match to specific patterns (patterns in $_PATTERNS)
-			case 'datetime':
+			case 'datetime': // datetime was dropped from HTML spec
 				$date_format = DATE_RFC3339;
 				$human_readable = 'YYYY-MM-DD"T"HH:MM:SS"Z" or "+/-HH:MM"';
 				break;
