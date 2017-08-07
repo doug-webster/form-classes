@@ -294,6 +294,42 @@ HTML;
 		$this->validationRun = true;
 	} // end function
 	
+	// returns CSS for form
+	public static function getFormCSS()
+	{
+		return <<<CSS
+form.form-class .required {}
+form.form-class .required:after {content: "*";}
+form.form-class .attention {color: #CC0000;}
+.form-errors {margin: 10px auto; color: #CC0000;}
+.form-errors .label {font-weight: bold;}
+form.form-class .form-input-box {font-size: 1em; line-height: 1.5em; margin-top: 1em; margin-bottom: 1em; white-space: nowrap;}
+form.form-class .aligned {margin-left: 126.5px;}
+form.form-class .form-options {display: inline-block;}
+form.form-class .form-options > input {margin-left: 0;}
+
+/* labels */
+form.form-class label:not(.checkbox):not(.radio) {display: -moz-inline-stack; display: inline-block; margin: 0 5px 0 0; padding: 0; text-align: right; width: 120px; white-space: normal; vertical-align: top;}
+/* for radio and checkbox labels */
+form.form-class label.inline:not(.checkbox):not(.radio) {display: inline; text-align: left; width: auto;}
+
+/* inputs (inc. select and textarea) */
+.form-class input, .form-class select, .form-class textarea {max-width: 100%;}
+.form-class textarea {height: 100px; width: 350px; vertical-align: top;}
+.form-class input[readonly], .form-class textarea[readonly], .form-class select[readonly], 
+.form-class input[disabled], .form-class textarea[disabled], .form-class select[disabled] {background-color: #EEEEEE; color: #666666; border: thin solid #AAAAAA;}
+.form-class input[type="file"] {background-color: white; border: thin solid #888; padding: 0;} /*border-style: inset; border-width: thin;*/
+.form-class .form-input-box.file-input.disabled, .form-class input[type="file"][readonly], .form-class input[type="file"][disabled] {display: none;}
+
+/* responsive */
+@media (max-width: 590px) /* 17px discrepancy */ {
+	form.form-class label {width: auto; display: block; text-align: left;}
+	.form-class .aligned {margin-left: auto;}
+}
+
+CSS;
+	}
+	
 	/* the following methods are for database interaction */
 	
 	// gets the info for columns in table and saves this info in object property
