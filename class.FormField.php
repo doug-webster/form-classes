@@ -422,7 +422,7 @@ class FormField extends Form
 		}
 		
 		$classes = array();
-		if ( $type == 'file' ) $classes[] = 'file-input';
+		if ( ! empty( $type ) ) $classes[] = $type;
 		if ( ! empty( $this->errors ) ) $classes[] = 'attention';
 		if ( isset( $this->attributes['disabled'] ) ) $classes[] = 'disabled';
 		$classes = implode( ' ', $classes );

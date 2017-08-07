@@ -339,7 +339,7 @@ form.form-class label.inline:not(.checkbox):not(.radio) {display: inline; text-a
 .form-class input[readonly], .form-class textarea[readonly], .form-class select[readonly], 
 .form-class input[disabled], .form-class textarea[disabled], .form-class select[disabled] {background-color: #EEEEEE; color: #666666; border: thin solid #AAAAAA;}
 .form-class input[type="file"] {background-color: white; border: thin solid #888; padding: 0;} /*border-style: inset; border-width: thin;*/
-.form-class .form-input-box.file-input.disabled, .form-class input[type="file"][readonly], .form-class input[type="file"][disabled] {display: none;}
+.form-class .form-input-box.file.disabled, .form-class input[type="file"][readonly], .form-class input[type="file"][disabled] {display: none;}
 
 /* responsive */
 @media (max-width: 590px) /* 17px discrepancy */ {
