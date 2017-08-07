@@ -320,8 +320,9 @@ class FormField extends Form
 				$i = 0;
 				foreach ( $this->options as $option_value => $option_text ) {
 					++$i;
+					$custom = $option_text == '' || is_array( $option_text );
 					// blank text indicates custom input
-					if ( $option_text != '' ) {
+					if ( ! $custom ) {
 						$checked = $this->isOptionSelected( $option_value );
 					} else {
 						$option_value = $custom_name;
@@ -332,14 +333,17 @@ class FormField extends Form
 					$option_value = $this->makeHtmlSafe( $option_value );
 					$html .= "<input {$attributes} {$checked} id='{$id}-{$i}' value='{$option_value}' />\n";
 					// blank text indicates custom input
-					if ( $option_text != '' ) {
+					if ( ! $custom ) {
 						$html .= "<label for='{$id}-{$i}' class='inline'>{$option_text}</label><br />\n";
 					} else {
 						$value = $this->getSubmittedValue( $custom_name );
 						$value = ( isset( $value ) )
 							? $this->makeHtmlSafe( $value ) : '';
+						$placeholder = ( isset( $option_text['placeholder'] ) )
+							? $option_text['placeholder'] : 'Other (please specify)';
+						$placeholder = $this->makeHtmlSafe( $placeholder );
 						$custom_name = $this->makeHtmlSafe( $custom_name );
-						$html .= "<input type='text' name='{$custom_name}' value='{$value}' placeholder='Other (please specify)' onfocus='document.getElementById(\"{$id}-{$i}\").checked = true;' />\n";
+						$html .= "<input type='text' name='{$custom_name}' value='{$value}' placeholder='{$placeholder}' onfocus='document.getElementById(\"{$id}-{$i}\").checked = true;' />\n";
 					}
 				}
 				$html .= "</div>\n";
