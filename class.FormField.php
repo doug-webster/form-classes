@@ -720,7 +720,7 @@ class FormField extends Form
 		return array( 'errors' => $errors, 'filenames' => $filenames );
 	} // end function
 	
-	/* the following methods are for database interaction */
+	// the following methods are for database interaction ---------------------
 	
 	// prepares $value for insertion into database query
 	public function makeSqlSafe( $value )

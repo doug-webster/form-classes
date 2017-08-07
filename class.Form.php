@@ -16,6 +16,7 @@ class Form
 	public $primaryKey; // name of primary key field
 	public $isEdit = false; // true if a db record is being edited (update), false for new record (insert)
 	public $editID; // id of the record being edited, if applicable
+	public $record = array(); // an array of data to use for form values initially
 	public $SQLWarnings = array(); // an array of warnings regarding values matched to database fields
 	
 	public function __construct( $initialize = array() )
@@ -111,6 +112,23 @@ class Form
 			end( $this->fields ); // set pointer to last array item, which should be the item we just added
 			$a = each( $this->fields ); // allows us to get the key of the current, now last, item
 			$field = $this->fields[$a['key']];
+		}
+		if ( $field->attribute['type'] != 'password' ) {
+			// set value of "value" attribute to corresponding record value if present
+			if ( ! isset( $field->attributes['value'] ) )
+				$field->attributes['value'] = '';
+			if ( ! empty( $field->dbFieldName ) && isset( $this->record[$field->dbFieldName] ) ) {
+				if ( in_array( $field->attributes['type'], array( 'checkbox', 'radio' ) ) && count( $field->options ) <= 1 ) {
+					if ( ! empty( $this->record[$field->dbFieldName] ) )
+						$field->attributes['checked'] = 'checked';
+					else
+						unset( $field->attributes['checked'] );
+				} else {
+					$v = $this->record[$field->dbFieldName];
+					if ( ! empty( $v ) || $v === '0' )
+						$field->attributes['value'] = $v;
+				}
+			}
 		}
 		$field->formSubmitted = $this->formSubmitted;
 		$field->method = $this->method;
@@ -330,7 +348,7 @@ form.form-class label.inline:not(.checkbox):not(.radio) {display: inline; text-a
 CSS;
 	}
 	
-	/* the following methods are for database interaction */
+	// the following methods are for database interaction ---------------------
 	
 	// gets the info for columns in table and saves this info in object property
 	public function setColumnInfo()
@@ -384,9 +402,16 @@ CSS;
 		$query = "SELECT * FROM `{$this->table}` WHERE `{$this->primaryKey}` = '{$this->editID}'";
 		$result = $this->mysqli->query( $query );
 		$record = ( $result ) ? $result->fetch_array() : $result;
-		$this->isEdit = ( ! empty( $record ) ) ? true : false;
+		if ( $result )
+			$this->setRecord( $record );
 		return $record;
 	} // end function
+	
+	public function setRecord( $record )
+	{
+		$this->record = $record;
+		$this->isEdit = ( ! empty( $record ) ) ? true : false;
+	}
 	
 	// creates an insert or update query of the submitted form data
 	public function buildQuery( $excludes = array(), $sql = array() )
