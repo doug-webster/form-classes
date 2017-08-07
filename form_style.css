@@ -1,31 +1,31 @@
-form .required {}
-	form .required:after {content: "*";}
-form .attention {color: #CC0000;}
-form .center {text-align: center;}
+form.form-class .required {}
+form.form-class .required:after {content: "*";}
+form.form-class .attention {color: #CC0000;}
 .form-errors {margin: 10px auto; color: #CC0000;}
-	.form-errors .label {font-weight: bold;}
+.form-errors .label {font-weight: bold;}
+form.form-class .form-input-box {font-size: 1em; line-height: 1.5em; margin-top: 1em; margin-bottom: 1em; white-space: nowrap;}
+form.form-class .aligned {margin-left: 126.5px;}
+form.form-class .form-options {display: inline-block;}
+form.form-class .form-options > input {margin-left: 0;}
 
-form .section {border: thin solid black; padding: 0px 15px; margin: 20px 0px;}
-form .subsection {border: thin solid black; background: #F5F5F5; margin: 10px 0px; padding: 10px;}
-form .form-input-box {font-size: 1em; line-height: 1.5em; margin-top: 1em; margin-bottom: 1em; white-space: nowrap;}
-	form label:not(.checkbox):not(.radio) {display: -moz-inline-stack; display: inline-block; margin: 0 5px 0 0; padding: 0; text-align: right; width: 120px; white-space: normal; vertical-align: top;}
-	/* for radio and checkbox labels */
-	form label.inline:not(.checkbox):not(.radio) {display: inline; text-align: left; width: auto;}
-	input, select, textarea {max-width: 100%;}
-	textarea {height: 100px; width: 350px; max-width: 100%; vertical-align: top;}
-	form .aligned {margin-left: 126.5px;}
-	form .form-options {display: inline-block;}
-		form .form-options > input {margin-left: 0;}
-	
-form .form_heading {font-weight: bold; font-size: 14pt; margin: 15px 0px 25px 0px;}
-form .form_subheading {font-weight: bold; font-size: 11pt; margin: 10px 0px 15px 0px;}
+form.form-class label:not(.checkbox):not(.radio) {display: -moz-inline-stack; display: inline-block; margin: 0 5px 0 0; padding: 0; text-align: right; width: 120px; white-space: normal; vertical-align: top;}
+/* for radio and checkbox labels */
+form.form-class label.inline:not(.checkbox):not(.radio) {display: inline; text-align: left; width: auto;}
 
-input[readonly], textarea[readonly], select[readonly], 
-input[disabled], textarea[disabled], select[disabled] {background-color: #EEEEEE; color: #666666; border: thin solid #AAAAAA;}
-.form-input-box.file-input.disabled, input[type="file"][readonly], input[type="file"][disabled] {display: none;}
+.form-class input, .form-class select, .form-class textarea {max-width: 100%;}
+.form-class textarea {height: 100px; width: 350px; vertical-align: top;}
+.form-class input[readonly], .form-class textarea[readonly], .form-class select[readonly], 
+.form-class input[disabled], .form-class textarea[disabled], .form-class select[disabled] {background-color: #EEEEEE; color: #666666; border: thin solid #AAAAAA;}
+.form-class input[type="file"] {background-color: white; border: thin solid #888; padding: 0;} /*border-style: inset; border-width: thin;*/
+.form-class .form-input-box.file-input.disabled, .form-class input[type="file"][readonly], .form-class input[type="file"][disabled] {display: none;}
 
 /* responsive */
 @media (max-width: 590px) /* 17px discrepancy */ {
-	form label {width: auto; display: block; text-align: left;}
-	.aligned {margin-left: auto;}
+	form.form-class label {width: auto; display: block; text-align: left;}
+	.form-class .aligned {margin-left: auto;}
 }
+
+/*form.form-class .section {border: thin solid black; padding: 0px 15px; margin: 20px 0px;}
+form.form-class .subsection {border: thin solid black; background: #F5F5F5; margin: 10px 0px; padding: 10px;}
+form.form-class .form_heading {font-weight: bold; font-size: 14pt; margin: 15px 0px 25px 0px;}
+form.form-class .form_subheading {font-weight: bold; font-size: 11pt; margin: 10px 0px 15px 0px;}*/

@@ -20,23 +20,20 @@ class Form
 	
 	public function __construct( $initialize = array() )
 	{
-		if ( ! empty( $initialize['attributes'] ) ) {
+		if ( ! empty( $initialize['attributes'] ) )
 			$this->attributes = $initialize['attributes'];
-		}
-		if ( empty( $this->attributes['method'] ) ) {
+		if ( empty( $this->attributes['class'] ) )
+			$this->attributes['class'] = 'form-class';
+		if ( empty( $this->attributes['method'] ) )
 			$this->attributes['method'] = 'post'; // default method
-		}
 		$this->method = $this->attributes['method'];
-		if ( empty( $this->attributes['action'] ) ) {
+		if ( empty( $this->attributes['action'] ) )
 			$this->attributes['action'] = basename( $_SERVER['PHP_SELF'] ); // default action
-		}
 		$this->setFormSubmitted();
-		if ( ! empty( $initialize['mysqli'] ) ) {
+		if ( ! empty( $initialize['mysqli'] ) )
 			$this->mysqli = $initialize['mysqli'];
-		}
-		if ( ! empty( $initialize['table'] ) ) {
+		if ( ! empty( $initialize['table'] ) )
 			$this->table = $initialize['table'];
-		}
 		$this->setColumnInfo();
 	}
 	
