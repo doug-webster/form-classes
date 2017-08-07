@@ -257,7 +257,7 @@ class FormField extends Form
 		$html = '';
 		if ( empty( $this->attributes['type'] ) ) return;
 		switch ( $this->attributes['type'] ) {
-			case 'textarea':
+			case 'textarea': {
 				$attributes = $this->getAttributeString( array( 'type', 'value' ) );
 				if ( $this->formSubmitted && ! isset( $this->attributes['disabled'] ) ) {
 					$attribute_value = $this->htmlSafeValue;
@@ -266,8 +266,8 @@ class FormField extends Form
 				}
 				$html .= "<textarea {$attributes}>{$attribute_value}</textarea>\n";
 				break;
-				
-			case 'select':
+			}
+			case 'select': {
 				if ( ! isset( $this->options ) || ! is_array( $this->options ) ) break;
 				$attributes = $this->getAttributeString( array( 'type', 'value', 'placeholder' ) );
 				$html .= "<select {$attributes}>\n";
@@ -284,8 +284,8 @@ class FormField extends Form
 				}
 				$html .= "</select>\n";
 				break;
-				
-			case "checkbox":
+			}
+			case "checkbox": {
 				if ( empty( $this->options ) || ! is_array( $this->options ) ) {
 				// if options aren't set, create a single input
 					$checked = '';
@@ -301,7 +301,8 @@ class FormField extends Form
 					break;
 				}
 				// if checkbox has options, it will continue into the following process shared by radio inputs
-			case "radio":
+			}
+			case "radio": {
 				if ( empty( $this->options ) || ! is_array( $this->options ) ) break;
 				// allow for multiple checkboxes or radio options under one primary label
 				$name_multiple = false;
@@ -343,7 +344,7 @@ class FormField extends Form
 				}
 				$html .= "</div>\n";
 				break;
-				
+			}
 			case "submit":
 			case "reset":
 			case "button":
