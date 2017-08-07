@@ -50,6 +50,11 @@ class FormField extends Form
 		}
 		if ( ! empty( $initialize['filepath'] ) )
 			$this->filepath = $initialize['filepath'];
+		// allow ability to use labels for placeholders or vice versa
+		if ( $this->useLabelsForPlaceholders && empty( $this->attributes['placeholder'] ) isset( $this->label ) )
+			$this->attributes['placeholder'] = $this->label;
+		if ( $this->usePlaceholdersForLabels && empty( $this->label ) && isset( $this->attributes['placeholder'] ) )
+			$this->label = $this->attributes['placeholder'];
 	}
 	
 	// remove slashes if magic quotes is on

@@ -8,6 +8,8 @@ class Form
 	public $includeSpambotTest = true; // whether or not to include the anti-spambot test
 	public $errors = array(); // validation errors
 	public $validationRun = false; // whether or not the validation function has been run
+	public $useLabelsForPlaceholders = false;
+	public $usePlaceholdersForLabels = false;
 	
 	// the following are used for database interaction
 	public $mysqli; // mysqli object
