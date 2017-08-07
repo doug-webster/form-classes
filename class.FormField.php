@@ -13,6 +13,7 @@ class FormField extends Form
 	public $custom_option_suffix = '_custom'; // used with radio and checkbox list custom (user entered) option
 	public $custom_selected = false; // indicates whether or not a custom option was selected; assumes only one custom input
 	public $filepath = ''; // used with file types; path to location to save file
+	public $options_one_line = false; // if true, attempt to show checkbox or radio options on one line
 	
 	// the following are used for database interaction
 	public $mysqli; // mysqli object
@@ -329,12 +330,12 @@ class FormField extends Form
 						$checked = $this->custom_selected;
 					}
 					$checked = $checked ? 'checked="checked"' : '';
-					$option_text = $this->makeHtmlSafe( $option_text );
 					$option_value = $this->makeHtmlSafe( $option_value );
 					$html .= "<input {$attributes} {$checked} id='{$id}-{$i}' value='{$option_value}' />\n";
 					// blank text indicates custom input
 					if ( ! $custom ) {
-						$html .= "<label for='{$id}-{$i}' class='inline'>{$option_text}</label><br />\n";
+						$option_text = $this->makeHtmlSafe( $option_text );
+						$html .= "<label for='{$id}-{$i}' class='inline'>{$option_text}</label>\n";
 					} else {
 						$value = $this->getSubmittedValue( $custom_name );
 						$value = ( isset( $value ) )
@@ -345,6 +346,8 @@ class FormField extends Form
 						$custom_name = $this->makeHtmlSafe( $custom_name );
 						$html .= "<input type='text' name='{$custom_name}' value='{$value}' placeholder='{$placeholder}' onfocus='document.getElementById(\"{$id}-{$i}\").checked = true;' />\n";
 					}
+					if ( ! $this->options_one_line )
+						$html .= "<br />\n";
 				}
 				$html .= "</div>\n";
 				break;
