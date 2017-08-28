@@ -115,7 +115,7 @@ class Form
 			$a = each( $this->fields ); // allows us to get the key of the current, now last, item
 			$field = $this->fields[$a['key']];
 		}
-		if ( $field->attribute['type'] != 'password' ) {
+		if ( $field->attributes['type'] != 'password' ) {
 			// set value of "value" attribute to corresponding record value if present
 			if ( ! isset( $field->attributes['value'] ) )
 				$field->attributes['value'] = '';
