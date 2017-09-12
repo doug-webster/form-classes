@@ -137,7 +137,7 @@ class FormField extends Form
 	// sets $this->value to what was submitted if possible
 	public function setSubmittedValue()
 	{
-		if ( ! $this->formSubmitted || ! empty( $this->attributes['name'] ) || empty( $this->method ) ) return;
+		if ( ! $this->formSubmitted || empty( $this->attributes['name'] ) || empty( $this->method ) ) return;
 		
 		$this->updateRequestGlobals();
 		$name = $this->attributes['name'];
