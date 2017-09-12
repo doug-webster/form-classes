@@ -556,7 +556,7 @@ class FormField extends Form
 		} // end switch
 		
 		// if necessary, check to make sure value matches pattern
-		if ( ! empty( $this->attributes['pattern'] ) && ! preg_match( $this->attributes['pattern'], $match_value ) ) {
+	if ( ! empty( $this->attributes['pattern'] ) && ! preg_match( "/{$this->attributes['pattern']}/", $match_value ) ) {
 			return "{$label} is not in the correct format.";
 		}
 		if ( $type == 'color' ) {
