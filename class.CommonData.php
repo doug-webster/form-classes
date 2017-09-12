@@ -1,6 +1,14 @@
 <?php
 class CommonData
 {
+	static public function getPattern( $key, $delimiter = '/' )
+	{
+		$_PATTERNS = CommonData::getCommonRegexPatterns( $delimiter );
+		if ( isset( $_PATTERNS[$key] ) )
+			return $_PATTERNS[$key];
+		return false;
+	}
+	
 	static public function getCommonRegexPatterns( $delimiter = '/' )
 	{
 		// basic patterns
