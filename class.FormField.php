@@ -273,7 +273,8 @@ class FormField extends Form
 				$attributes = $this->getAttributeString( array( 'type', 'value', 'placeholder' ) );
 				$html .= "<select {$attributes}>\n";
 				$placeholder = ( isset( $this->attributes['placeholder'] ) ) ? $this->makeHtmlSafe( $this->attributes['placeholder'] ) : '';
-				if ( ! isset( $this->attributes['required'] ) || ! empty( $placeholder ) ) {
+				// automatically show a placeholder if not required and not multiple, or if a placeholder has been set
+				if ( ( ! isset( $this->attributes['required'] ) && ! isset( $this->attributes['multiple'] ) ) || ! empty( $placeholder ) ) {
 					$html .= "<option value='' class='placeholder'>{$placeholder}</option>\n";
 				}
 				
