@@ -1,4 +1,4 @@
-A couple of years ago I created some classes to assist with handling forms. As you no doubt are aware, there are several routine steps which need to be performed for each form field. Writing these over and over is tedious and time consuming. I created these classes in attempt to automate and therefore speed development as much as possible. I was inspired in part by the rudimentary system set up in many contact forms on toolbar sites. I was also inspired by work I did on many forms before starting DH.
+A couple of years ago I created some classes to assist with handling forms. As you no doubt are aware, there are several routine steps which need to be performed for each form field. Writing these over and over is tedious and time consuming. I created these classes in attempt to automate and therefore speed development as much as possible. I was inspired in part by the rudimentary system set up in many contact forms on toolbar sites (proprietary CMS). I was also inspired by work I did on many forms before starting at Digital Hill.
 
 I have used these classes on most of the projects I've worked on since creating them. They have turned out to be flexible enough to work in all these many situations. Since the form system is comprehensive, there may be a bit of a learning curve. I hope this documentation will mitigate confusion or uncertainty.
 
@@ -158,7 +158,6 @@ $form->addField( array(
 	'label' => 'Name', 
 	'attributes' => array(
 		'name' => 'field_name',
-		'type' => 'text', 
 	),
 ));
 $form->addField( array(
@@ -185,23 +184,20 @@ $form = new Form( array(
 ));
 
 if ( ! empty( $_REQUEST['id'] ) ) {
-	$user = $form->getData( (int)$_REQUEST['id'] );
+	$user = $form->getDBData( (int)$_REQUEST['id'] );
 }
 
 $form->addField( array(
 	'attributes' => array(
 		'name' => 'user_id',
 		'type' => 'hidden', 
-		'value' => ( ! empty( $user['user_id'] ) ? $user['user_id'] : '' ),
 	),
 ));
 $form->addField( array(
 	'label' => 'Name', 
 	'attributes' => array(
 		'name' => 'name',
-		'type' => 'text', 
 		'required' => 'required', 
-		'value' => ( ! empty( $user['name'] ) ? $user['name'] : '' ),
 	),
 ));
 $CommonData = new CommonData();
@@ -214,7 +210,6 @@ $form->addField( array(
 		'type' => 'select', 
 		'placeholder' => '- Select State -',
 		'required' => 'required', 
-		'value' => ( ! empty( $user['state'] ) ? $user['state'] : '' ),
 	),
 	'options' => $options,
 ));
@@ -222,10 +217,8 @@ $form->addField( array(
 	'label' => 'Zip / Postal Code', 
 	'attributes' => array(
 		'name' => 'postal_code',
-		'type' => 'text', 
 		'pattern' => "({$_PATTERNS['us_zip']}|{$_PATTERNS['ca_postal_code']})",
 		'required' => 'required', 
-		'value' => ( ! empty( $user['postal_code'] ) ? $user['postal_code'] : '' ),
 	),
 ));
 $form->addField( array(
