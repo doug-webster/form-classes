@@ -223,7 +223,7 @@ class FormField extends Form
 	{
 		$value = ( $this->formSubmitted && ! isset( $this->attributes['disabled'] ) ) ? $this->value : ( isset( $this->attributes['value'] ) ? $this->attributes['value'] : '' );
 		$option_value = trim( $option_value );
-		if ( $value != null ) {
+		if ( ! is_null( $value ) ) {
 			// check for array since multiple options can be selected (if multiple attribute set)
 			if ( ( is_array( $value ) && in_array( $option_value, $value ) ) 
 				|| ( ! is_array( $value ) && $value == $option_value ) ) {
