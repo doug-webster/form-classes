@@ -117,8 +117,6 @@ class Form
 		}
 		if ( $field->attributes['type'] != 'password' ) {
 			// set value of "value" attribute to corresponding record value if present
-			if ( ! isset( $field->attributes['value'] ) )
-				$field->attributes['value'] = '';
 			if ( ! empty( $field->dbFieldName ) && isset( $this->record[$field->dbFieldName] ) ) {
 				if ( in_array( $field->attributes['type'], array( 'checkbox', 'radio' ) ) && count( $field->options ) <= 1 ) {
 					if ( ! empty( $this->record[$field->dbFieldName] ) )
