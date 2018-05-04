@@ -292,7 +292,7 @@ class FormField extends Form
 				// if options aren't set, create a single input
 					$checked = '';
 					if ( $this->formSubmitted && ! isset( $this->attributes['disabled'] ) ) {
-						if ( ! empty( $this->value ) ) {
+						if ( ! is_null( $this->value ) ) {
 							$checked = 'checked="checked"';
 						} else {
 							if ( isset( $this->attributes['checked'] ) ) unset( $this->attributes['checked'] );
