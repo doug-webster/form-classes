@@ -61,6 +61,7 @@ class FormField extends Form
 	// remove slashes if magic quotes is on
 	protected function reverse_magic_quotes( &$string )
 	{
+		if ( is_null( $string ) ) return;
 		if ( get_magic_quotes_runtime() || get_magic_quotes_gpc() ) {
 			$string = stripslashes( $string );
 		}
@@ -69,12 +70,14 @@ class FormField extends Form
 	// apply trim directly to the submitted variable
 	private function trimd( &$string )
 	{
+		if ( is_null( $string ) ) return;
 		$string = trim( $string );
 	}
 	
 	// apply strtolower directly to submitted variable
 	private function strtolowerd( &$string )
 	{
+		if ( is_null( $string ) ) return;
 		$string = strtolower($string);
 	}
 
